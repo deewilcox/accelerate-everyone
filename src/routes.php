@@ -7,7 +7,7 @@ use Slim\Http\Response;
 
 $app->get('/[{name}]', function (Request $request, Response $response, array $args) {
     // Sample log message
-    $this->logger->info("Slim-Skeleton '/' route");
+    $this->logger->info("Accelerate Everyone '/' default route");
 
     // Render index view
     return $this->renderer->render($response, 'index.phtml', $args);

@@ -10,6 +10,7 @@ class ComposerStaticInitc05e8eead23f3b97b83e968fc417f50f
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '253c157292f75eb38082b5acb06f3f01' => __DIR__ . '/..' . '/nikic/fast-route/src/functions.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -30,6 +31,7 @@ class ComposerStaticInitc05e8eead23f3b97b83e968fc417f50f
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Component\\Yaml\\' => 23,
             'Slim\\Views\\' => 11,
+            'Slim\\Csrf\\' => 10,
             'Slim\\' => 5,
         ),
         'P' => 
@@ -83,6 +85,10 @@ class ComposerStaticInitc05e8eead23f3b97b83e968fc417f50f
         'Slim\\Views\\' => 
         array (
             0 => __DIR__ . '/..' . '/slim/php-view/src',
+        ),
+        'Slim\\Csrf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/slim/csrf/src',
         ),
         'Slim\\' => 
         array (

@@ -1,3 +1,5 @@
 .git
 .idea/*
 composer.phar
+dev-settings.php
+prod-settings.php
