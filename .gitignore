@@ -1,6 +1,6 @@
 .git
 .idea/*
 composer.phar
-src/dev-settings.php
+config/prod-config.php
 src/prod-settings.php
 vendor/*
