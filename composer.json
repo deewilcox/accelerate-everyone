@@ -31,7 +31,7 @@
         "process-timeout" : 0
     },
     "scripts": {
-        "post-update-cmd": "cd src; ln -s prod-settings.php settings.php; cd ../",
+        "post-update-cmd": "cd config; ln -s dev-settings.php settings.php; cd ../",
         "start": "php -S localhost:8080 -t public",
         "test": "phpunit"
     }
