@@ -2,30 +2,30 @@
 
 namespace AccelerateEveryone;
 
-class Peers extends Member {
+class Users extends Member {
 
     public function __construct() {
 
     }
 
-    protected function createPeer($params) {
+    protected function createUser($params) {
         $errors = ['error'];
 
         if (empty($params)) {
-            $errors['errors'][] = 'Unable to create new Peer. Empty param array.';
-            $this->logger('Unable to create new Peer. Empty param array.');
+            $errors['errors'][] = 'Unable to create new User. Empty param array.';
+            $this->logger('Unable to create new User. Empty param array.');
         }
 
-        $requiredParams = ['organization_id','nickname'];
+        $requiredParams = ['user_id','nickname'];
         $errors['errors'][] = validateForm($requiredParams, $params);
 
         if ($errors) return $errors;
 
-        $organizationId = $params['organization_id'];
+        $userId = $params['user_id'];
         $nickname = $params['nickname'];
 
         $json = json_encode([
-            'organization_id' => $organizationId,
+            'user_id' => $userId,
             'nickname' => $nickname,
             'active' => 'Y',
             'create_datetime' => date('Y-m-d H:i:s'),
@@ -34,15 +34,15 @@ class Peers extends Member {
         ]);
     
         $params = [
-            'TableName' => 'ae_peer',
+            'TableName' => 'ae_user',
             'Item' => $marshaler->marshalJson($json)
         ];
     
         try {
             $result = $dynamodb->putItem($params);
-            $this->logger('Added Peer: ' . $peer['nickname']);
+            $this->logger('Added User: ' . $user['nickname']);
         } catch (DynamoDbException $e) {
-            $this->logger('Unable to add Peer: ' . $e->getMessage());
+            $this->logger('Unable to add User: ' . $e->getMessage());
             $errors['error'][] = $e->getMessage() . "\n";
         }
 
@@ -51,56 +51,56 @@ class Peers extends Member {
         return true;
     }
 
-    protected function updatePeerById($params) {
+    protected function updateUserById($params) {
         $errors = ['error'];
         $results = array();
 
-        if (!isset($params['peer_id']) || empty($params['peer_id'])) {
-            $errors['error'][] = 'Missing Peer ID';
+        if (!isset($params['user_id']) || empty($params['user_id'])) {
+            $errors['error'][] = 'Missing User ID';
         }
 
         if ($errors) return $errors;
 
         // Check to ensure record exists and get current record
-        $currentDataResults = getPeerById($id);
+        $currentDataResults = getUserById($id);
         if (isset($currentDataResults['error'])) return $currentDataResults['error'];
 
         $currentData = $currentDataResults['Item'];
-        $currentOrganizationId = $currentData['organization_id'];
+        $currentUserId = $currentData['user_id'];
         $currentNickname = $currentData['nickname'];
 
         // Pull out the keys we want to update
-        $peerId = $params['peer_id'];
-        $newOrganizationId = isset($params['organization_id']) && !empty($params['organization_id']) 
-                            ? $params['organization_id'] 
-                            : $currentOrganizationId;
+        $userId = $params['user_id'];
+        $newUserId = isset($params['user_id']) && !empty($params['user_id']) 
+                            ? $params['user_id'] 
+                            : $currentUserId;
 
         $newNickname = isset($params['nickname']) && !empty($params['nickname']) 
                             ? $params['nickname'] 
                             : $currentNickname;
 
         $updateData = [
-            ':organization_id' => $newOrganizationId, 
+            ':user_id' => $newUserId, 
             ':nickname' => $newNickname,
             ':updateDateTime' => date('Y-m-d H:i:s')
         ];
            
         $key = [
-            'id' => $peerId
+            'id' => $userId
         ];
 
         $params = [
-            'TableName' => 'ae_peer',
+            'TableName' => 'ae_user',
             'Key' => getMarshalJson($key),
             'UpdateExpression' => 
-                'set organization_id = :organization_id, nickname=:nickname, updateDateTime=:updateDateTime',
+                'set user_id = :user_id, nickname=:nickname, updateDateTime=:updateDateTime',
             'ExpressionAttributeValues'=> getMarshalJson($updateData),
             'ReturnValues' => 'UPDATED_NEW'
         ];
 
         try {
             $results = $dynamodb->updateItem($params);
-            $logger->info('Updated Peer: ' . $peerId);        
+            $logger->info('Updated User: ' . $userId);        
         } catch (DynamoDbException $e) {
             $logger->info('Unable to update item: ' . $e->getMessage());
             $errors['error'][] = 'Unable to update item: ' . $e->getMessage();
@@ -111,12 +111,12 @@ class Peers extends Member {
         return $results;
     }
 
-    protected function deletePeer($id) {
+    protected function deleteUser($id) {
         $errors = ['error'];
         $results = array();
 
-        if (!isset($params['peer_id']) || empty($params['peer_id'])) {
-            $errors['error'][] = 'Missing Peer ID';
+        if (!isset($params['user_id']) || empty($params['user_id'])) {
+            $errors['error'][] = 'Missing User ID';
         }
 
         if ($errors) return $errors;
@@ -126,14 +126,14 @@ class Peers extends Member {
         ];
 
         $params = [
-            'TableName' => 'ae_peer',
+            'TableName' => 'ae_user',
             'Key' => getMarshalJson($key),
             'ExpressionAttributeValues'=> getMarshalJson($updateData)
         ];
 
         try {
             $results = $dynamodb->deleteItem($params);
-            $logger->info('Deleted Peer: ' . $peerId);        
+            $logger->info('Deleted User: ' . $userId);        
         } catch (DynamoDbException $e) {
             $logger->info('Unable to delete item: ' . $e->getMessage());
             $errors['error'][] = 'Unable to delete item: ' . $e->getMessage();
@@ -144,61 +144,30 @@ class Peers extends Member {
         return $results;
     }
 
-    public function getPeerByOrganizationIdId($organizationId) {
+    public function getuserById($userId) {
         $errors = ['error'];
         $results = array();
 
-        if (!$organizationId) {
-            $errors['error'][] = 'Missing organization ID';
+        if (!$userId) {
+            $errors['error'][] = 'Missing User ID';
         }
 
         if ($errors) return $errors;
 
         $data = [
-            'organization_id' => $organizationId
+            'id' => $userId
         ];
 
         $params = [
-            'TableName' => 'ae_peer',
+            'TableName' => 'ae_user',
             'Key' => getMarshalJson($data)
         ];
         
         try {
             $results = $dynamodb->getItem($params);
         } catch (DynamoDbException $e) {
-            $logger->info('Unable to get Peer by organization ID: ' . $e->getMessage());
-            $errors['error'][] = 'Unable to get Peer by organization ID: ' . $e->getMessage();
-        }
-
-        if ($errors) return $errors;
-
-        return $results;
-    }
-
-    public function getPeerById($PeerId) {
-        $errors = ['error'];
-        $results = array();
-
-        if (!$peerId) {
-            $errors['error'][] = 'Missing Peer ID';
-        }
-
-        if ($errors) return $errors;
-
-        $data = [
-            'id' => $peerId
-        ];
-
-        $params = [
-            'TableName' => 'ae_peer',
-            'Key' => getMarshalJson($data)
-        ];
-        
-        try {
-            $results = $dynamodb->getItem($params);
-        } catch (DynamoDbException $e) {
-            $logger->info('Unable to get Peer by ID: ' . $e->getMessage());
-            $errors['error'][] = 'Unable to get Peer by ID: ' . $e->getMessage();
+            $logger->info('Unable to get User by ID: ' . $e->getMessage());
+            $errors['error'][] = 'Unable to get User by ID: ' . $e->getMessage();
         }
 
         if ($errors) return $errors;

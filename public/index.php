@@ -11,10 +11,17 @@ if (PHP_SAPI == 'cli-server') {
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use Aws\Exception\AwsException;
+
+use Aws\S3\S3Client;
+use Aws\S3\Exception\S3Exception;
+
+use Aws\DynamoDb\DynamoDbClient;
+use Aws\DynamoDb\Exception\DynamoDbException;
+
 session_start();
 
 // Instantiate the app
-$config = require __DIR__ . '/../config/config.php';
 $settings = require __DIR__ . '/../config/settings.php';
 $app = new \Slim\App($settings);
 

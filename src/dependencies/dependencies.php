@@ -17,3 +17,11 @@ $container['logger'] = function ($c) {
     $logger->pushHandler(new Monolog\Handler\StreamHandler($settings['path'], $settings['level']));
     return $logger;
 };
+
+// AWS SDK
+$container['sdk'] = function ($c) {
+    $settings = $c->get('settings')['aws'];
+    $sdk = new Aws\Sdk($settings);
+    return $sdk;
+};
+
